@@ -1,0 +1,195 @@
+/* Créditos fixos no topo */
+.credits {
+  position: fixed;
+  top: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #ffffffcc;
+  font-family: 'Arial', sans-serif;
+  z-index: 9999;
+  pointer-events: none;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Reset mínimo */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Body + Gradient full‑screen */
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Degradê full‑screen */
+  background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+  background-size: cover;
+  background-attachment: fixed;
+  
+  /* Fade‑in suave ao carregar */
+  opacity: 0;
+  animation: fadeIn 0.6s forwards ease-in;
+}
+
+/* Animação de fade‑in */
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+/* Container glass */
+.container {
+  width: 360px;
+  max-width: 90%;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.4);
+  padding: 2.5rem 2rem;
+  color: #fff;
+  position: relative;
+  
+  /* Transição ao dar foco no container (opacidade, sombra) */
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.container:hover {
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 12px 60px rgba(0,0,0,0.5);
+}
+
+/* Título */
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.9rem;
+  transition: color 0.3s ease;
+}
+
+.container:hover h2 {
+  color: #f0f0f0;
+}
+
+/* Inputs */
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 1rem;
+  position: relative;
+  z-index: 0;
+  
+  /* Transições */
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+input[type="email"]:hover,
+input[type="password"]:hover {
+  transform: translateY(-2px);
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  background: rgba(255,255,255,0.25);
+  outline: none;
+}
+
+/* Botão de submit */
+button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  
+  /* Transições */
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background: rgba(255,255,255,0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* Botão de toggle — estilo “limpo” */
+.toggle-password {
+  all: unset;
+  position: absolute;
+  right: 0.75rem;
+  top: calc(50% + 0.4rem);
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.9rem;
+  z-index: 1;
+  
+  /* Transição de cor */
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.toggle-password:hover {
+  color: #ddd;
+  transform: translateY(-1px);
+}
+
+/* Mensagens e links */
+.message {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.message a {
+  color: #a0eaff;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.message a:hover {
+  color: #bffeff;
+}
+
+/* GIF container */
+.gif-container {
+  text-align: center;
+  margin-top: 1.5rem;
+  
+  /* Aparecer com fade */
+  opacity: 0;
+  animation: fadeIn 0.4s forwards ease-in-out 0.2s;
+}
+
+.gif-container img {
+  max-width: 100%;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.gif-container img:hover {
+  transform: scale(1.02);
+}

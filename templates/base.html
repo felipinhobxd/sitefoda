@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+
+  <!-- CORRETO: usa filename -->
+  <link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/style.css') }}"
+  >
+  <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+  <div class="credits">Feito por Felipe Veçoski 1°DS n°15</div>
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
