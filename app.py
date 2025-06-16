@@ -32,6 +32,9 @@ def login():
             gif = url_for('static', filename='images/cats_dancing.gif')
     return render_template('login.html', message=message, gif=gif)
 
+@app.route("/")
+def home():
+    return redirect(url_for("login"))
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     message = None
