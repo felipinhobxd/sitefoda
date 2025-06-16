@@ -2,13 +2,13 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
+  <title>Cadastro</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <div class="container">
-    <form action="/login" method="POST" class="glass">
-      <h2>Login</h2>
+    <form action="/cadastro" method="POST" class="glass">
+      <h2>Cadastro</h2>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}
@@ -22,11 +22,11 @@
       </div>
       <div class="input-group">
         <label>Senha</label>
-        <input type="password" name="senha" id="senha-login" required>
-        <button type="button" onclick="toggleSenha('senha-login')">👁️</button>
+        <input type="password" name="senha" id="senha-cadastro" required>
+        <button type="button" onclick="toggleSenha('senha-cadastro')">👁️</button>
       </div>
-      <button type="submit" class="btn">Entrar</button>
-      <p><a href="/cadastro">Não tem conta? Cadastre-se</a></p>
+      <button type="submit" class="btn">Cadastrar</button>
+      <p><a href="/login">Já tem conta? Faça login</a></p>
     </form>
   </div>
   <script>

@@ -1,55 +1,68 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-import os
-import json
+import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
+app.secret_key = 'chave_secreta_segura'
 
-USERS_FILE = 'users.json'
+def init_db():
+    conn = sqlite3.connect('usuarios.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            senha TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-def load_users():
-    if os.path.exists(USERS_FILE):
-        with open(USERS_FILE, 'r') as f:
-            return json.load(f)
-    return {}
-
-def save_users(users):
-    with open(USERS_FILE, 'w') as f:
-        json.dump(users, f)
-
-@app.route("/")
+@app.route('/')
 def home():
-    return redirect(url_for("login"))  # ROTA CORRIGIDA AQUI
+    return redirect(url_for('login'))
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-        users = load_users()
+    if request.method == 'POST':
+        email = request.form['email']
+        senha = request.form['senha']
 
-        if email in users and users[email] == password:
-            return render_template("success.html", gif="cats_dancing.gif")
+        conn = sqlite3.connect('usuarios.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT senha FROM usuarios WHERE email = ?', (email,))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user and check_password_hash(user[0], senha):
+            return redirect('https://www.youtube.com/@SindromeGames')
         else:
-            flash("Essa conta não existe ou a senha está incorreta")
-            return render_template("login.html", gif="cat_sad.gif")
-    return render_template("login.html", gif=None)
+            flash('E-mail ou senha incorretos!', 'erro')
+            return redirect(url_for('login'))
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-        users = load_users()
+    return render_template('login.html')
 
-        if email in users:
-            flash("Essa conta já existe")
-            return render_template("register.html", gif="cat_sad.gif")
-        else:
-            users[email] = password
-            save_users(users)
-            return render_template("success.html", gif="cats_dancing.gif")
-    return render_template("register.html", gif=None)
+@app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    if request.method == 'POST':
+        email = request.form['email']
+        senha = request.form['senha']
+        hash_senha = generate_password_hash(senha)
 
-if __name__ == "__main__":
+        try:
+            conn = sqlite3.connect('usuarios.db')
+            cursor = conn.cursor()
+            cursor.execute('INSERT INTO usuarios (email, senha) VALUES (?, ?)', (email, hash_senha))
+            conn.commit()
+            conn.close()
+            flash('Cadastro realizado com sucesso!', 'sucesso')
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            flash('E-mail já cadastrado!', 'erro')
+            return redirect(url_for('cadastro'))
+
+    return render_template('cadastro.html')
+
+if __name__ == '__main__':
+    init_db()
     app.run(debug=True)
