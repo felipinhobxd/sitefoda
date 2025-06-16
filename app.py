@@ -1,52 +1,55 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
+import os
+import json
 
-# explicita onde está a pasta static e qual URL usar
-app = Flask(
-    __name__,
-    static_folder='static',
-    static_url_path='/static'
-)
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
 
-# SECRET_KEY forte (32 bytes hex)
-app.config['SECRET_KEY'] = '4e48b6706919f99898d34f21dea65f6e4663f2afa2011fad3d9b38c435b2d10f'
+USERS_FILE = 'users.json'
 
-# In‑memory store de usuários: {email: senha}
-users = {}
+def load_users():
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, 'r') as f:
+            return json.load(f)
+    return {}
 
-@app.route('/')
+def save_users(users):
+    with open(USERS_FILE, 'w') as f:
+        json.dump(users, f)
+
+@app.route("/")
 def home():
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))  # ROTA CORRIGIDA AQUI
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    message = None
-    gif = None
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        if email not in users or users[email] != password:
-            message = 'Essa conta não existe ou a senha está incorreta'
-            gif = url_for('static', filename='images/cat_sad.gif')
-        else:
-            message = 'Login bem‑sucedido!'
-            gif = url_for('static', filename='images/cats_dancing.gif')
-    return render_template('login.html', message=message, gif=gif)
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        users = load_users()
 
-@app.route('/register', methods=['GET', 'POST'])
+        if email in users and users[email] == password:
+            return render_template("success.html", gif="cats_dancing.gif")
+        else:
+            flash("Essa conta não existe ou a senha está incorreta")
+            return render_template("login.html", gif="cat_sad.gif")
+    return render_template("login.html", gif=None)
+
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    message = None
-    gif = None
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        users = load_users()
+
         if email in users:
-            message = 'Essa conta já existe'
-            gif = url_for('static', filename='images/cat_sad.gif')
+            flash("Essa conta já existe")
+            return render_template("register.html", gif="cat_sad.gif")
         else:
             users[email] = password
-            message = 'Cadastro realizado com sucesso!'
-            gif = url_for('static', filename='images/cats_dancing.gif')
-    return render_template('register.html', message=message, gif=gif)
+            save_users(users)
+            return render_template("success.html", gif="cats_dancing.gif")
+    return render_template("register.html", gif=None)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
